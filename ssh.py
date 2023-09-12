@@ -1,22 +1,23 @@
 from asyncio import run
 
 from aiogram import Bot, Dispatcher
-from aiogram.types import Message, InputFile
-import logging
+from aiogram.types import Message, FSInputFile
 
 
 async def func(message: Message):
-    await message.answer_document(
-        document=InputFile('/root/.shh/id_rsa.pub')
+    with open('/root/.shh/id_rsa.pub') as f:
+        ssh = f.readline()
+    await message.answer(
+        text=f'<code>{ssh}</code>',
+        parse_mode='html'
     )
 
 
 async def start():
     bot = Bot(token='6073317405:AAERVk7dxQIKDZ4VU42s_w4Va2Zgaq5a8S0')
     dp = Dispatcher()
-    logging.basiConfig(logging.INFO)
     dp.message.register(func)
 
-    dp.start_pooling(bot)
+    await dp.start_polling(bot)
 
 run(start())
